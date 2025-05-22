@@ -40,7 +40,13 @@ $Error.Clear()
 
 # create a compressed archive of the entire directory
 Write-Output "[-] Compressing Target Directory: $TargetDirectory..."
+# Old < 2 GB compression method
 Compress-Archive -Path $TargetDirectory -DestinationPath "$DestinationDirectory\$BackupName.zip" -CompressionLevel Fastest -Verbose -ErrorAction SilentlyContinue
+# end
+# New > 2 GB compression method
+Add-Type -AssemblyName System.IO.Compression.filesystem
+[IO.Compression.ZipFile]::CreateFromDirectory($TargetDirectory, "$DestinationDirectory\$BackupName.zip")
+# end
 
 # Will search the TargetDirectory for any of the specified files (by extension array) and copy them into the tdestination dir (targetdir)
 Write-Output "[-] Beginning File Organization...."
